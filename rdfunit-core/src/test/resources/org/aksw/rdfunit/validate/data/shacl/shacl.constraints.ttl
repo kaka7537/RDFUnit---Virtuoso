@@ -1,0 +1,157 @@
+@prefix ex: <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rlog: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/rlog#> .
+
+
+# A sample shape, meant only to test the shape readers (ATM)
+
+ex:MyShape
+	a sh:Shape ;
+	sh:scopeClass ex:Person ;
+
+	sh:property [
+		sh:predicate ex:classCheckProperty ;
+		sh:class ex:SuperClass ;
+	] ;
+	sh:property [
+		sh:predicate ex:checkClassIn ;
+		sh:classIn (ex:SuperClass1 ex:SuperClass2) ;
+	] ;
+	sh:property [
+        sh:predicate ex:checkDirectClass ;
+        sh:directType ex:DirectClass ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkDatatype ;
+        sh:datatype xsd:date ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkDatatypeIn ;
+        sh:datatypeIn (xsd:date xsd:nonNegativeInteger) ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkEquals ;
+        sh:equals ex:checkEqualsTo ;
+    ] ;
+    sh:property [
+        sh:predicate ex:checkNotEquals ;
+        sh:notEquals ex:checkNotEqualsTo ;
+    ] ;
+    sh:property [
+        sh:predicate ex:checkLength ;
+        sh:minLength 3;
+        sh:maxLength 5;
+    ];
+    sh:property [
+        sh:predicate ex:checkMinMaxExclusive ;
+        sh:minExclusive 5 ;
+        sh:maxExclusive 10 ;
+    ] ;
+    sh:property [
+        sh:predicate ex:checkMinMaxInclusive ;
+        sh:minInclusive 5 ;
+        sh:maxInclusive 10 ;
+    ] ;
+    sh:property [
+        sh:predicate ex:checkPattern ;
+        sh:pattern "^Ali" ;
+        sh:flags "i" ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkHasValue ;
+        sh:hasValue "100"^^xsd:int ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkIn ;
+        sh:in (ex:A "example" ) ;
+    ] ;
+
+
+    # sh:nodeType
+	sh:property [
+		sh:predicate ex:checkNodeKindIRI ;
+		sh:nodeKind sh:IRI ;
+    ] ;
+    sh:property [
+        sh:predicate ex:checkNodeKindLiteral ;
+        sh:nodeKind sh:Literal ;
+    ]  ;
+    sh:property [
+        sh:predicate ex:checkNodeKindBlankNode ;
+        sh:nodeKind sh:BlankNode ;
+    ] ;
+
+.
+
+
+
+ex:MyCardShapeMin
+	a sh:Shape ;
+	sh:scopeClass ex:CardCheckMin ;
+
+    sh:property [
+        sh:predicate ex:checkMinCount0 ;
+        sh:minCount "0"^^xsd:int ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkMinCount1 ;
+        sh:minCount "1"^^xsd:int ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkMinCount3 ;
+        sh:minCount "3"^^xsd:int ;
+    ] ;
+.
+ex:MyCardShapeMax
+	a sh:Shape ;
+	sh:scopeClass ex:CardCheckMax ;
+
+    sh:property [
+        sh:predicate ex:checkMaxCount0 ;
+        sh:maxCount "0"^^xsd:int ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkMaxCount1 ;
+        sh:maxCount "1"^^xsd:int ;
+    ] ;
+
+    sh:property [
+        sh:predicate ex:checkMaxCount3 ;
+        sh:maxCount "3"^^xsd:int ;
+    ] ;
+    .
+
+ex:ValueShapeExampleShape
+	a sh:Shape ;
+	sh:scopeClass ex:ValueShapeClass;
+	sh:property [
+		sh:predicate ex:someProperty ;
+		sh:valueShape ex:ValueShapeNested1 ;
+	] .
+
+ex:ValueShapeNested1
+    a sh:Shape ;
+    sh:property [
+        sh:predicate ex:nestedProperty ;
+        sh:minCount 2 ;
+        sh:valueShape ex:ValueShapeNested2;
+    ].
+
+ex:ValueShapeNested2
+    a sh:Shape ;
+    sh:property [
+        sh:predicate ex:nestedProperty2 ;
+        sh:datatype xsd:int;
+    ].
+

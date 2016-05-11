@@ -1,0 +1,5 @@
+Main-Class: org.aksw.rdfunit.VirtuosoExecutor
+
+
+
+
