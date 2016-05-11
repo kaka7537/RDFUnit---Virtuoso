@@ -1,32 +1,17 @@
-RDFUnit - RDF Unit Testing Suite
+RDFUnit - Virtuoso : Delete triples which were occuring errors 
 ==========
 
-[![Build Status](https://travis-ci.org/AKSW/RDFUnit.svg?branch=master)](https://travis-ci.org/AKSW/RDFUnit)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.aksw.rdfunit/rdfunit-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.aksw.rdfunit/rdfunit-parent)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/2650/badge.svg?flat=1)](https://scan.coverity.com/projects/2650)
-[![Coverage Status](https://coveralls.io/repos/AKSW/RDFUnit/badge.svg?branch=master&service=github)](https://coveralls.io/github/AKSW/RDFUnit?branch=master)
-[![Project Stats](https://www.openhub.net/p/RDFUnit/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/RDFUnit)
-
-
-
-**Homepage**: http://rdfunit.aksw.org <br/>
-**Documentation**: https://github.com/AKSW/RDFUnit/wiki  <br/>
-**Mailing list**: https://groups.google.com/d/forum/rdfunit (rdfunit [at] googlegroups.com)  <br/>
-**Presentations**: http://www.slideshare.net/jimkont  <br/>
-**Brief Overview**: https://github.com/AKSW/RDFUnit/wiki/Overview
-
-RDFUnit is implemented on top of the [Test-Driven Data Validation Ontology](http://rdfunit.aksw.org/ns/core#) and designed to read and produce RDF that complies to that ontology only.
-The main components that RDFUnit reads are 
-[TestCases (manual & automatic), TestSuites](https://github.com/AKSW/RDFUnit/wiki/TestCases), 
-[Patterns & TestAutoGenerators](https://github.com/AKSW/RDFUnit/wiki/Patterns-Generators). 
-RDFUnit also strictly defines the results of a TestSuite execution along with [different levels of result granularity](https://github.com/AKSW/RDFUnit/wiki/Results).
+**Homepage**: Not served yet <br/>
+**Documentation**: Not served yet  <br/>
+**Mailing list**: kaka7537@kaist.ac.kr  <br/>
 
 ### Basic usage
 
-See [RDFUnit from Command Line](https://github.com/AKSW/RDFUnit/wiki/CLI) for (a lot) more options but the simplest setting is as follows:
+The simplest setting is as follows:
 
 ```console
-$ bin/rdfunit -d <local-or-remote-location-URI>
+$ mvn -Dmaven.test.skip=true install
+$ bin/rdfunit -d <ANY-COMMAND>
 ```
 
 What RDFUnit will do is:
@@ -44,17 +29,3 @@ $ bin/rdfunit -d <dataset-uri> -s <schema1,schema2,schema3,...>
 ```
 
 Where you define your own schemas and we pick up from step 3. You can also use prefixes directly (e.g. `-s foaf,skos`) we can get everything that is defined in [LOV](http://lov.okfn.org).
-
-
-### Supported Schemas
-
-RDFUnit supports the following types of schemas
-
-1. **OWL** (using CWA): We pick the most commons OWL axioms as well as schema.org. (see [[1]](https://github.com/AKSW/RDFUnit/labels/OWL),[[2]](https://github.com/AKSW/RDFUnit/issues/20) for details
-1. **SHACL**: SHACL is still in progress but we support [the most stable parts of the language](https://github.com/AKSW/RDFUnit/labels/SHACL). Whatever constructs we support can also run on SPARQL Endpoints (SHACL does not support SPARQL endpoints by design)
-1. IBM **Resource Shapes**: The progress is tracked [here](https://github.com/AKSW/RDFUnit/issues/23) bus as soon as SHACL becomes stable we will drop support for RS
-1. **DSP** (Dublin Core Set Profiles): The progress is tracked [here](https://github.com/AKSW/RDFUnit/issues/22) bus as soon as SHACL becomes stable we will drop support for RS 
-
-Note that you can mix all of these constraints together and RDFUnit will validate the dataset against all of them.
-
-[![Java profiler](http://www.ej-technologies.com/images/product_banners/jprofiler_small.png)](http://www.ej-technologies.com/products/jprofiler/overview.html)
