@@ -75,19 +75,20 @@ public class TestMain {
 	String date = dateFormat.format(startTime.getTime());
 
 	List<String> address = ReadConfigurationFromINIFile.readConfigurationFromINIFile();
-	List<String> filenames = new ArrayList<String>();
 	System.out.println(address);
-	for(String address_name : address)
-	{
-	    String filename_parameter = MakeTTL.makeTTLfile(HOST, USERNAME, PASSWORD, address_name);
-	    filenames.add(filename_parameter);
-	    String[] rdfunit_parameter = {"-d", filename_parameter};
-	    //ValidateCLI.doMain(rdfunit_parameter, filename_parameter);
-	}
 	
-	//String OUTPUT_IRI = "http://kbox_" + date + ".kaist.ac.kr";
-	//for(String filename : filenames)
-	//    WriteToVirtuoso.Write(HOST, USERNAME, PASSWORD, OUTPUT_IRI, filename);
+	String integratedTTL = "kbox_" + date + ".ttl";
+	String filename_parameter = MakeTTL.makeTTLfile(HOST, USERNAME, PASSWORD, address, integratedTTL);
+	
+	String TestingTTL = "ttl-resource/TestCase4.ttl";
+	String[] rdfunit_parameter = {"-d", TestingTTL};
+	ValidateCLI.doMain(rdfunit_parameter, TestingTTL);
+	
+	//String[] rdfunit_parameter = {"-d", filename_parameter};
+	//ValidateCLI.doMain(rdfunit_parameter, filename_parameter);
+
+	String OUTPUT_IRI = "http://kbox_" + date + ".kaist.ac.kr";
+	//WriteToVirtuoso.Write(HOST, USERNAME, PASSWORD, OUTPUT_IRI, filename_parameter);
     }
 
 }

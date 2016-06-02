@@ -1,0 +1,8 @@
+<http://ko.dbpedia.org/resource/슈퍼주니어>
+        a       <http://dbpedia.org/ontology/Artist> ;
+        <http://dbpedia.org/ontology/birthDate>
+                "1991-01-16" ;
+        <http://dbpedia.org/ontology/birthPlace>
+                <http://ko.dbpedia.org/resource/대한민국> ;
+        <http://dbpedia.org/ontology/deathDate>
+                "2001-01-16" .

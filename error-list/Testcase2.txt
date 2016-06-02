@@ -1,0 +1,12 @@
+http://dbpedia.org/ontology/deathDate has rdfs:domain different from: http://dbpedia.org/ontology/Person
+http://ko.dbpedia.org/resource/슈퍼주니어 http://dbpedia.org/ontology/deathDate 1966-01-16
+http://dbpedia.org/ontology/deathDate Error count = 1
+http://dbpedia.org/ontology/birthPlace has rdfs:domain different from: http://dbpedia.org/ontology/Person
+http://ko.dbpedia.org/resource/슈퍼주니어 http://dbpedia.org/ontology/birthPlace http://ko.dbpedia.org/resource/대한민국
+http://dbpedia.org/ontology/birthPlace Error count = 1
+http://dbpedia.org/ontology/birthDate has rdfs:domain different from: http://dbpedia.org/ontology/Person
+http://ko.dbpedia.org/resource/슈퍼주니어 http://dbpedia.org/ontology/birthDate 1991-01-16
+http://dbpedia.org/ontology/birthDate Error count = 1
+A dbp:birthDate cannot be after a dbo:deathDate
+http://ko.dbpedia.org/resource/슈퍼주니어 http://dbpedia.org/ontology/birthDate 1991-01-16
+http://dbpedia.org/ontology/birthDate Error count = 1

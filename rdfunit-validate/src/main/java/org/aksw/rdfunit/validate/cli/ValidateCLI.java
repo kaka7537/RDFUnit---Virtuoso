@@ -134,6 +134,7 @@ public class ValidateCLI {
         checkNotNull(testExecutor);
         testExecutor.addTestExecutorMonitor(testExecutorMonitor);
 
+	//// EXOBRAIN B-BOX CODE ////
 	// VIRTUOSO TESTING
 	//VirtuosoExecutor virtuosoExecutor = new VirtuosoExecutor();
 	//virtuosoExecutor.test();
@@ -159,6 +160,7 @@ public class ValidateCLI {
 	}
 	testModel.close();
 	System.out.println(filename_parameter + " TTL FILE CLOSE SUCCESS!");
+	//////////////////////////////
 
         // Write results to RDFWriter ()
         String resultsFolder = configuration.getDataFolder() + "results/";

@@ -18,17 +18,19 @@ import java.io.UnsupportedEncodingException;
 
 public class MakeTTL  {
 
-	public static String makeTTLfile(String HOST, String USERNAME, String PASSWORD, String GRAPHIRI) throws IOException
+	public static String makeTTLfile(String HOST, String USERNAME, String PASSWORD, List<String> GRAPHIRI_LIST, String integratedTTL) throws IOException
 	{
-		System.out.println(GRAPHIRI + " TTL MAKING START");		
+		System.out.println(GRAPHIRI_LIST + " TTL MAKING START");		
 		Model OUTPUT = ModelFactory.createDefaultModel();
 
-	        VirtGraph set = new VirtGraph(GRAPHIRI, HOST, USERNAME, PASSWORD);
-	        Query sparql = QueryFactory.create("SELECT ?s ?p ?o FROM <" + GRAPHIRI + "> WHERE {?s ?p ?o}");
+		for(String GRAPHIRI : GRAPHIRI_LIST)
+		{
+	            VirtGraph set = new VirtGraph(GRAPHIRI, HOST, USERNAME, PASSWORD);
+	            Query sparql = QueryFactory.create("SELECT ?s ?p ?o FROM <" + GRAPHIRI + "> WHERE {?s ?p ?o}");
 
-	        VirtuosoQueryExecution vqe = VirtuosoQueryExecutionFactory.create(sparql, set);
-	        ResultSet results = vqe.execSelect();
-	        while(results.hasNext()) {
+	            VirtuosoQueryExecution vqe = VirtuosoQueryExecutionFactory.create(sparql, set);
+	            ResultSet results = vqe.execSelect();
+	            while(results.hasNext()) {
 	                QuerySolution qs = results.next();
 			RDFNode subject = qs.get("s");
 			RDFNode predicate = qs.get("p");
@@ -50,9 +52,12 @@ public class MakeTTL  {
 			{
 			    OUTPUT.createResource(subject.toString()).addProperty(property, string_object);
 			}
-	        }
-		String filename = GRAPHIRI.substring(7, 17);
-		filename = "ttl-resource/"+filename+".ttl";
+	            }
+		    vqe.close();
+	            set.close();
+		}
+
+		String filename = "ttl-resource/" + integratedTTL;
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(filename);
@@ -65,10 +70,9 @@ public class MakeTTL  {
 			e.printStackTrace();
 		}
 		fos.close();
-	        set.close();
 		OUTPUT.close();
 
-		System.out.println(GRAPHIRI + " TTL MAKING DONE");		
+		System.out.println(GRAPHIRI_LIST + " TTL MAKING DONE");		
 		return filename;
 	}
 

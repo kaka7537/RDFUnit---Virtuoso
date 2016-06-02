@@ -20,6 +20,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.aksw.rdfunit.tests.executors.AggregatedTestExecutor;
 /**
  * Takes a dataset source and executes the test queries against the endpoint.
  *
@@ -156,7 +157,7 @@ public abstract class TestExecutor {
 
         /*notify end of testing */
         progressMonitors.forEach(TestExecutorMonitor::testingFinished);
-
+System.out.println("GLOBAL ERROR = " + AggregatedTestExecutor.globalError);
         return success;
     }
 

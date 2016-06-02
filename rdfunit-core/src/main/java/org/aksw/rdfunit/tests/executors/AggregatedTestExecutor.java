@@ -24,6 +24,9 @@ import org.apache.jena.rdf.model.StmtIterator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.BufferedWriter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -42,6 +45,7 @@ public class AggregatedTestExecutor extends TestExecutor {
      *
      * @param queryGenerationFactory a QueryGenerationFactory
      */
+    public static int globalError = 0;
     public AggregatedTestExecutor(QueryGenerationFactory queryGenerationFactory) {
         super(queryGenerationFactory);
     }
@@ -54,7 +58,8 @@ public class AggregatedTestExecutor extends TestExecutor {
         try {
             Query prevalenceQuery = testCase.getSparqlPrevalenceQuery();
             if (prevalenceQuery != null) {
-                prevalence = getCountNumber(testSource.getExecutionFactory(), testCase.getSparqlPrevalenceQuery(), "total", "Prevalence", 0, testCase, testModel);
+                //prevalence = getCountNumber(testSource.getExecutionFactory(), testCase.getSparqlPrevalenceQuery(), "total", "Prevalence", 0, testCase, testModel);
+                prevalence = getCountNumber(testSource.getExecutionFactory(), testCase.getSparqlPrevalenceQuery(), "total");
             }
         } catch (QueryExceptionHTTP e) {
             if (SparqlUtils.checkStatusForTimeout(e)) {
@@ -67,7 +72,15 @@ public class AggregatedTestExecutor extends TestExecutor {
         if (prevalence != 0) {
             // if prevalence !=0 calculate total
             try {
-                total = getCountNumber(testSource.getExecutionFactory(), queryGenerationFactory.getSparqlQuery(testCase), "total", "ERROR", prevalence, testCase, testModel);
+                //total = getCountNumber(testSource.getExecutionFactory(), queryGenerationFactory.getSparqlQuery(testCase), "total", "ERROR", prevalence, testCase, testModel);
+                total = getCountNumber(testSource.getExecutionFactory(), queryGenerationFactory.getSparqlQuery(testCase), "total");
+		if(prevalence > 0 && total > 0)
+		{
+		    try{
+		        deleteTriple(testSource.getExecutionFactory(), testCase, testModel);
+		    } catch(IOException e) {}
+			//System.out.println(testCase.getResultMessage());
+		}
             } catch (QueryExceptionHTTP e) {
                 if (SparqlUtils.checkStatusForTimeout(e)) {
                     total = -1;
@@ -84,7 +97,51 @@ public class AggregatedTestExecutor extends TestExecutor {
         return Collections.<TestCaseResult>singletonList(new AggregatedTestCaseResultImpl(testCase, total, prevalence));
     }
 
-    private int getCountNumber(QueryExecutionFactory model, Query query, String var, String var2, int prevalence, TestCase testCase, Model testModel) {
+    private void deleteTriple(QueryExecutionFactory model, TestCase testCase, Model testModel) throws IOException {
+	BufferedWriter file = new BufferedWriter(new FileWriter("error-list/TRIPLE_LIST.txt", true));
+	file.write( testCase.getResultMessage() );
+	file.newLine();
+
+	String subject = null;
+	String object = null;
+
+	int localError = 0;
+	Query tripleQuery = QueryGenerationCountFactory.getSparqlTripleQuery(testCase);
+
+	String property = QueryGenerationCountFactory.getProperty();
+	property = property.replace(">", "");
+	property = property.replace("<", "");
+	Property rdf_prop = testModel.createProperty(property);
+
+ 	String obj = QueryGenerationCountFactory.getObject();
+	obj = obj.replace("?","");
+
+        try ( QueryExecution qe_triple = model.createQueryExecution(tripleQuery) ) {
+		ResultSet results_triple = qe_triple.execSelect();
+		while(results_triple != null && results_triple.hasNext()){
+		    QuerySolution qs_triple = results_triple.next();
+
+		    RDFNode rdf_sub = qs_triple.get("this");
+		    RDFNode rdf_obj = qs_triple.get(obj);
+
+		    subject = rdf_sub.toString();
+		    object = rdf_obj.toString();
+		    Resource res_sub = testModel.createResource(subject);
+		    //System.out.println(subject + " " + property + " " + object);
+		    file.write(subject + " " + property + " " + object);
+		    file.newLine();
+		    testModel = testModel.removeAll(res_sub, rdf_prop, rdf_obj); 
+		    localError++;
+		    globalError++;
+		}
+	
+   	}
+	file.write(property + " Error count = " + localError);
+	file.newLine();
+	file.close();
+    }
+
+    private int getCountNumber(QueryExecutionFactory model, Query query, String var) {
 
         checkNotNull(query);
         checkNotNull(var);
@@ -99,6 +156,7 @@ public class AggregatedTestExecutor extends TestExecutor {
                 result = qs.get(var).asLiteral().getInt();
             }
         }
+/*
 	if(var2.equals("ERROR") && prevalence > 0)
 	{
 	    String subject = null;
@@ -136,14 +194,12 @@ public class AggregatedTestExecutor extends TestExecutor {
 			//System.out.println(stm.getSubject() + " " + stm.getPredicate() + " " + stm.getObject());
 		    //}
 		    testModel = testModel.removeAll(res_sub, rdf_prop, rdf_obj); 
-
-		    //Query deleteQuery = "DELETE WHERE { +<" + subject + "> " + property + " <" + object + ">}";
 		}
 	
    	    }
  	    
 	}
-
+*/
         return result;
 
     }
