@@ -28,6 +28,7 @@ import org.aksw.rdfunit.validate.utils.ValidateUtils;
 import org.aksw.rdfunit.validate.cli.ReadConfigurationFromINIFile;
 import org.aksw.rdfunit.virtuoso.MakeTTL;
 import org.aksw.rdfunit.virtuoso.WriteToVirtuoso;
+import org.aksw.rdfunit.virtuoso.WriteDateToVirtuoso;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -77,12 +78,15 @@ public class TestMain {
 	List<String> address = ReadConfigurationFromINIFile.readConfigurationFromINIFile();
 	System.out.println(address);
 	
+	String runtimeGraph = ReadConfigurationFromINIFile.TEST_OUTPUT_IRI3;
+	WriteDateToVirtuoso.WriteDate(HOST, USERNAME, PASSWORD, runtimeGraph, date);	
+
 	String integratedTTL = "kbox_" + date + ".ttl";
 	String filename_parameter = MakeTTL.makeTTLfile(HOST, USERNAME, PASSWORD, address, integratedTTL);
 	
 	String TestingTTL = "ttl-resource/TestCase4.ttl";
 	String[] rdfunit_parameter = {"-d", TestingTTL};
-	ValidateCLI.doMain(rdfunit_parameter, TestingTTL);
+	//ValidateCLI.doMain(rdfunit_parameter, TestingTTL);
 	
 	//String[] rdfunit_parameter = {"-d", filename_parameter};
 	//ValidateCLI.doMain(rdfunit_parameter, filename_parameter);

@@ -24,6 +24,7 @@ public class ReadConfigurationFromINIFile {
     public static String GRAPH;
     public static String TEST_OUTPUT_IRI; //Graph IRI of Input triple file
     public static String TEST_OUTPUT_IRI2;
+    public static String TEST_OUTPUT_IRI3;
 
     public static List<String> readConfigurationFromINIFile()
     {
@@ -34,9 +35,9 @@ public class ReadConfigurationFromINIFile {
 		
 	TEST_OUTPUT_IRI = "http://bbox_"+ date +".kaist.ac.kr";
 	TEST_OUTPUT_IRI2 = "http://kbox_"+ date +".kaist.ac.kr";	
+	TEST_OUTPUT_IRI3 = "http://eachbox_operation_date.kaist.ac.kr";
 
-	// Check the date for input_iri (Input IRI = BBox_(n-1)~BBox_(n))
-		
+	// Get IRI from Virtuoso
 	String sparqlQueryString = "SELECT ?g (COUNT(*) as ?cnt) WHERE { GRAPH ?g {?s ?p ?o.} } GROUP BY ?g ORDER BY DESC(2)";
 	Query query = QueryFactory.create(sparqlQueryString);
 	VirtGraph graph = new VirtGraph(HOST, USERNAME, PASSWORD);
@@ -50,8 +51,33 @@ public class ReadConfigurationFromINIFile {
 		String graphName = row.get("?g").toString();
 		existingGraphs.add(graphName);
 	}
+
+	// Check recent KBox operation date  -  Added on 160608
+	VirtGraph runtimeGraph = new VirtGraph(TEST_OUTPUT_IRI3, HOST, USERNAME, PASSWORD);
+	Query sparql = QueryFactory.create("SELECT * WHERE {?s ?p ?o FILTER regex(str(?s), \"KBox\")}");
+	VirtuosoQueryExecution vqe = VirtuosoQueryExecutionFactory.create(sparql, runtimeGraph);
+	ResultSet results_runtime = vqe.execSelect();
+	ArrayList<String> runningTimeList = new ArrayList<String>();
+	int kboxLastItrDate = 0;
 		
-	// Find the most recent bbox iteration date
+	try{
+		while (results_runtime.hasNext()) {
+			QuerySolution row = results_runtime.next();
+			String runningTime = row.get("?o").toString();
+			runningTimeList.add(runningTime);
+		}
+		
+		Comparator cmp = Collections.reverseOrder();
+		Collections.sort(runningTimeList, cmp);
+		kboxLastItrDate = Integer.parseInt(runningTimeList.get(0));
+	}catch(IndexOutOfBoundsException e){
+		kboxLastItrDate = 151030;  // Initial day
+	}
+		
+		
+	System.out.println("KBoxLastOperationDate: " + kboxLastItrDate);	
+
+	// Find the l2k, c2k, and kbox IRIs
 	ArrayList<String> l2k_c2k_Graphs = new ArrayList<String>(); 
 	ArrayList<String> kboxGraphs = new ArrayList<String>(); 
 		
@@ -64,12 +90,12 @@ public class ReadConfigurationFromINIFile {
             }
         }
 		
-	Comparator cmp = Collections.reverseOrder();
-	Collections.sort(kboxGraphs, cmp);
-	String kboxLastItr = kboxGraphs.get(0);
-	int kboxLastItrDate = Integer.parseInt(kboxGraphs.get(0).substring(12, 18));
-
-kboxLastItrDate = 160202; // For Testing		
+	//Commented on 160608
+	//Comparator cmp = Collections.reverseOrder();
+	//Collections.sort(kboxGraphs, cmp);
+	//String kboxLastItr = kboxGraphs.get(0);
+	//int kboxLastItrDate = Integer.parseInt(kboxGraphs.get(0).substring(12, 18));
+	//kboxLastItrDate = 160202; // For Testing		
 
 	// Search the kbox data not enriched yet
 	ArrayList<String> needEnrichIRI = new ArrayList<String>();
@@ -79,8 +105,11 @@ kboxLastItrDate = 160202; // For Testing
                 needEnrichIRI.add(string);
             }
         }
-	needEnrichIRI.add(kboxLastItr);	
+
+	//Commented on 160608
+	//needEnrichIRI.add(kboxLastItr);	
 	graph.close();
+	runtimeGraph.close();
 	return needEnrichIRI;
 	//OUTPUT_FILE_PATH = "./output/"+"bbox_"+date+".ttl";
     }
