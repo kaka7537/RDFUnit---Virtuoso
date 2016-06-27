@@ -84,15 +84,15 @@ public class TestMain {
 	String integratedTTL = "kbox_" + date + ".ttl";
 	String filename_parameter = MakeTTL.makeTTLfile(HOST, USERNAME, PASSWORD, address, integratedTTL);
 	
-	String TestingTTL = "ttl-resource/TestCase4.ttl";
-	String[] rdfunit_parameter = {"-d", TestingTTL};
+	//String TestingTTL = "ttl-resource/TestCase4.ttl";
+	//String[] rdfunit_parameter = {"-d", TestingTTL};
 	//ValidateCLI.doMain(rdfunit_parameter, TestingTTL);
 	
-	//String[] rdfunit_parameter = {"-d", filename_parameter};
-	//ValidateCLI.doMain(rdfunit_parameter, filename_parameter);
+	String[] rdfunit_parameter = {"-d", filename_parameter};
+	ValidateCLI.doMain(rdfunit_parameter, filename_parameter);
 
 	String OUTPUT_IRI = "http://kbox_" + date + ".kaist.ac.kr";
-	//WriteToVirtuoso.Write(HOST, USERNAME, PASSWORD, OUTPUT_IRI, filename_parameter);
+	WriteToVirtuoso.Write(HOST, USERNAME, PASSWORD, OUTPUT_IRI, filename_parameter);
     }
 
 }

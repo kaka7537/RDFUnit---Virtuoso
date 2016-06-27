@@ -30,80 +30,112 @@ public class MakeTTL  {
 		// ADD triples to local ttl files from l2k, c2k virtuoso
 		for(String GRAPHIRI : GRAPHIRI_LIST)
 		{
-	            VirtGraph set = new VirtGraph(GRAPHIRI, HOST, USERNAME, PASSWORD);
-	            Query sparql = QueryFactory.create("SELECT ?s ?p ?o FROM <" + GRAPHIRI + "> WHERE {?s ?p ?o}");
+            VirtGraph set = new VirtGraph(GRAPHIRI, HOST, USERNAME, PASSWORD);
+            Query sparql = QueryFactory.create("SELECT ?s ?p ?o FROM <" + GRAPHIRI + "> WHERE {?s ?p ?o}");
 
-	            VirtuosoQueryExecution vqe = VirtuosoQueryExecutionFactory.create(sparql, set);
-	            ResultSet results = vqe.execSelect();
-	            while(results.hasNext()) {
-	                QuerySolution qs = results.next();
-			RDFNode subject = qs.get("s");
-			RDFNode predicate = qs.get("p");
-			RDFNode object = qs.get("o");
-			
-			subject_set.add(subject.toString());
+            VirtuosoQueryExecution vqe = VirtuosoQueryExecutionFactory.create(sparql, set);
+            ResultSet results = vqe.execSelect();
+            while(results.hasNext()) {
+                QuerySolution qs = results.next();
+					RDFNode subject = qs.get("s");
+					RDFNode predicate = qs.get("p");
+					RDFNode object = qs.get("o");
+					
+					subject_set.add(subject.toString());
 
-			Property property = OUTPUT.createProperty(predicate.toString());
-			String string_object = object.toString();
-			if(string_object.contains("http://ko.dbpedia"))
-			{
-			    Resource resource_object = OUTPUT.createResource(string_object);
-			    OUTPUT.createResource(subject.toString()).addProperty(property, resource_object);
-			}
-			else if(string_object.contains("http://dbpedia.org/ontology"))
-			{
-			    Resource resource_object = OUTPUT.createResource(string_object);
-			    OUTPUT.createResource(subject.toString()).addProperty(property, resource_object);
-			}
-			else
-			{
-			    OUTPUT.createResource(subject.toString()).addProperty(property, string_object);
-			}
+					Property property = OUTPUT.createProperty(predicate.toString());
+					String string_object = object.toString();
+					if(string_object.contains("http://ko.dbpedia"))
+					{
+					    Resource resource_object = OUTPUT.createResource(string_object);
+					    OUTPUT.createResource(subject.toString()).addProperty(property, resource_object);
+					}
+					else if(string_object.contains("http://dbpedia.org/ontology"))
+					{
+					    Resource resource_object = OUTPUT.createResource(string_object);
+					    OUTPUT.createResource(subject.toString()).addProperty(property, resource_object);
+					}
+					else
+					{
+					    OUTPUT.createResource(subject.toString()).addProperty(property, string_object);
+					}
 	            }
 		    vqe.close();
-	            set.close();
+            set.close();
 		}
+		
 
 		
-		// GET Type triples using binding
-		String sparqlQuery_start = "SELECT ?s ?o WHERE {?s a ?o} BINDINGS ?s {";
-		String sparqlQuery_end = "}";
-
+		
+		VirtGraph graph = new VirtGraph(HOST, USERNAME, PASSWORD);
+		System.out.println(subject_set.size());
 		Iterator<String> iter = subject_set.iterator();
 		while(iter.hasNext())
 		{
-		    String addSubject = iter.next();
-		    addSubject = "(" + addSubject + ")";
-		    sparqlQuery_start = sparqlQuery_start.concat(addSubject);
+			String addSubject = iter.next();
+			String sparqlQuery = "SELECT DISTINCT ?o WHERE{<" + addSubject + "> a ?o}";
+			Query query = QueryFactory.create(sparqlQuery);
+			VirtuosoQueryExecution qexec = VirtuosoQueryExecutionFactory.create(query, graph);
+			ResultSet results = qexec.execSelect();
+			RDFNode Type_subject = OUTPUT.createResource(addSubject);
+			Property Type_property = OUTPUT.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+			while(results.hasNext())
+			{
+			    QuerySolution qs = results.next();
+			    RDFNode Type_object = qs.get("o");
+			    Resource resource_object = OUTPUT.createResource(Type_object.toString());
+			    OUTPUT.createResource(Type_subject.toString()).addProperty(Type_property, resource_object);
+			}
+			qexec.close();
 		}
-
-		String sparqlQuery_complete = sparqlQuery_start.concat(sparqlQuery_end);
 		
-		/* BIND QUERY SAMPLE
-		String sparqlQuery_complete = "select * where{?s a ?o} BINDINGS ?s {" +
-						"(<http://ko.dbpedia.org/resource/'77_서울가요제>)" +
-						"(<http://ko.dbpedia.org/resource/%22O%22-正.反.合.>)" +
-						"(<http://ko.dbpedia.org/resource/!!!>)" +
-						"(<http://ko.dbpedia.org/resource/메간_폭스>)" +
-						"}";
-		System.out.println(sparqlQuery_complete);
-		*/
-		Query query = QueryFactory.create(sparqlQuery_complete);
-		VirtGraph graph = new VirtGraph(HOST, USERNAME, PASSWORD);
-		VirtuosoQueryExecution qexec = VirtuosoQueryExecutionFactory.create(query, graph);
-		ResultSet results = qexec.execSelect();
-		Property Type_property = OUTPUT.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-		while(results.hasNext())
-		{
-		    QuerySolution qs = results.next();
-		    RDFNode Type_subject = qs.get("s");
-		    RDFNode Type_object = qs.get("o");
-		    Resource resource_object = OUTPUT.createResource(Type_object.toString());
-		    OUTPUT.createResource(Type_subject.toString()).addProperty(Type_property, resource_object); 
-		}
-		qexec.close();
-		graph.close();
+		// graph.close();
+		
+		
+		
+//		// GET Type triples using binding
+//		String sparqlQuery_start = "SELECT ?s ?o WHERE {?s a ?o} BINDINGS ?s {";
+//		String sparqlQuery_end = "}";
+//
+//		Iterator<String> iter = subject_set.iterator();
+//		while(iter.hasNext())
+//		{
+//		    String addSubject = iter.next();
+//		    addSubject = "(" + addSubject + ")";
+//		    sparqlQuery_start = sparqlQuery_start.concat(addSubject);
+//		}
+//
+//		String sparqlQuery_complete = sparqlQuery_start.concat(sparqlQuery_end);
+//		
+//		/* BIND QUERY SAMPLE
+//		String sparqlQuery_complete = "select * where{?s a ?o} BINDINGS ?s {" +
+//						"(<http://ko.dbpedia.org/resource/'77_서울가요제>)" +
+//						"(<http://ko.dbpedia.org/resource/%22O%22-正.反.合.>)" +
+//						"(<http://ko.dbpedia.org/resource/!!!>)" +
+//						"(<http://ko.dbpedia.org/resource/메간_폭스>)" +
+//						"}";
+//		System.out.println(sparqlQuery_complete);
+//		*/
+//		Query query = QueryFactory.create(sparqlQuery_complete);
+//		VirtGraph graph = new VirtGraph(HOST, USERNAME, PASSWORD);
+//		VirtuosoQueryExecution qexec = VirtuosoQueryExecutionFactory.create(query, graph);
+//		ResultSet results = qexec.execSelect();
+//		Property Type_property = OUTPUT.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+//		while(results.hasNext())
+//		{
+//		    QuerySolution qs = results.next();
+//		    RDFNode Type_subject = qs.get("s");
+//		    RDFNode Type_object = qs.get("o");
+//		    Resource resource_object = OUTPUT.createResource(Type_object.toString());
+//		    OUTPUT.createResource(Type_subject.toString()).addProperty(Type_property, resource_object); 
+//		}
+//		qexec.close();
+//		graph.close();
 
+		
+		
+		
+		
 		String filename = "ttl-resource/" + integratedTTL;
 		FileOutputStream fos = null;
 		try {
