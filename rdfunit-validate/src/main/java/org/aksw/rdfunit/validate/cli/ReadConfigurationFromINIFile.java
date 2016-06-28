@@ -78,12 +78,12 @@ public class ReadConfigurationFromINIFile {
 	System.out.println("KBoxLastOperationDate: " + kboxLastItrDate);	
 
 	// Find the l2k, c2k, and kbox IRIs
-	ArrayList<String> l2k_c2k_Graphs = new ArrayList<String>(); 
+	ArrayList<String> l2k_c2k_b2k_Graphs = new ArrayList<String>(); 
 	ArrayList<String> kboxGraphs = new ArrayList<String>(); 
 		
 	for (String string : existingGraphs) {
-            if(string.matches("(http://l2k_1).*") || string.matches("(http://c2k_1).*")){
-                l2k_c2k_Graphs.add(string);
+            if(string.matches("(http://l2k_1).*") || string.matches("(http://c2k_1).*") || string.matches("(http://b2k_1).*")){
+                l2k_c2k_b2k_Graphs.add(string);
             }
 	    else if(string.matches("(http://kbox_1).*")){    //kbox
             	kboxGraphs.add(string);
@@ -99,8 +99,8 @@ public class ReadConfigurationFromINIFile {
 
 	// Search the kbox data not enriched yet
 	ArrayList<String> needEnrichIRI = new ArrayList<String>();
-	Collections.sort(l2k_c2k_Graphs);
-	for (String string : l2k_c2k_Graphs) {
+	Collections.sort(l2k_c2k_b2k_Graphs);
+	for (String string : l2k_c2k_b2k_Graphs) {
             if(Integer.parseInt(string.substring(11, 17)) > kboxLastItrDate){
                 needEnrichIRI.add(string);
             }
