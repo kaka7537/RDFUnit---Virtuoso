@@ -83,6 +83,7 @@ public class MakeTTL  {
 			{
 			    QuerySolution qs = results.next();
 			    RDFNode Type_object = qs.get("o");
+			    System.out.println(addSubject + "------" + Type_object.toString());
 			    Resource resource_object = OUTPUT.createResource(Type_object.toString());
 			    OUTPUT.createResource(Type_subject.toString()).addProperty(Type_property, resource_object);
 			}
