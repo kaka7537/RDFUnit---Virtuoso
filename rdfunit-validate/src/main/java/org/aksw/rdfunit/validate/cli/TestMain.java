@@ -56,7 +56,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TestMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(ValidateCLI.class);
-    public static String HOST="jdbc:virtuoso://143.248.135.60:1111/charset=UTF-8/log_enable=2";
+    public static String HOST="jdbc:virtuoso://211.109.9.79:1111/charset=UTF-8/log_enable=2";
     public static String TESTHOST="jdbc:virtuoso://dmserver5.kaist.ac.kr:4004/charset=UTF-8/log_enable=2";
     public static String USERNAME="dba";
     public static String PASSWORD="dba";
@@ -79,7 +79,7 @@ public class TestMain {
 	System.out.println(address);
 	
 	String runtimeGraph = ReadConfigurationFromINIFile.TEST_OUTPUT_IRI3;
-	WriteDateToVirtuoso.WriteDate(HOST, USERNAME, PASSWORD, runtimeGraph, date);	
+		
 
 	String integratedTTL = "kbox_" + date + ".ttl";
 	String filename_parameter = MakeTTL.makeTTLfile(HOST, USERNAME, PASSWORD, address, integratedTTL);
@@ -93,6 +93,7 @@ public class TestMain {
 
 	String OUTPUT_IRI = "http://kbox_" + date + ".kaist.ac.kr";
 	WriteToVirtuoso.Write(HOST, USERNAME, PASSWORD, OUTPUT_IRI, filename_parameter);
+	WriteDateToVirtuoso.WriteDate(HOST, USERNAME, PASSWORD, runtimeGraph, date);
     }
 
 }

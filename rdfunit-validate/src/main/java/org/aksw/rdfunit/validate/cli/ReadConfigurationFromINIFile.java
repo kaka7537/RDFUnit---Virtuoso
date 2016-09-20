@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 
 public class ReadConfigurationFromINIFile {
-    public static String HOST="jdbc:virtuoso://143.248.135.60:1111/charset=UTF-8/log_enable=2";
+    public static String HOST="jdbc:virtuoso://211.109.9.79:1111/charset=UTF-8/log_enable=2";
     public static String TESTHOST="jdbc:virtuoso://dmserver5.kaist.ac.kr:4004/charset=UTF-8/log_enable=2";
     public static String USERNAME="dba";
     public static String PASSWORD="dba";
@@ -82,7 +82,7 @@ public class ReadConfigurationFromINIFile {
 	ArrayList<String> kboxGraphs = new ArrayList<String>(); 
 		
 	for (String string : existingGraphs) {
-            if(string.matches("(http://l2k_1).*") || string.matches("(http://c2k_1).*") || string.matches("(http://b2k_1).*")){
+            if(string.matches("(http://l2k_1).*") || string.matches("(http://c2k_1).*")){     //  || string.matches("(http://b2k_1).*")){
                 l2k_c2k_b2k_Graphs.add(string);
             }
 	    else if(string.matches("(http://kbox_1).*")){    //kbox
