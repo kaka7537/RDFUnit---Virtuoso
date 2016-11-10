@@ -4,7 +4,6 @@ import virtuoso.jena.driver.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.RDFNode;
@@ -15,7 +14,6 @@ import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,26 +25,30 @@ import java.io.UnsupportedEncodingException;
 
 public class WriteToVirtuoso  {
 
-    public static void Write(String HOST, String USERNAME, String PASSWORD, String GRAPHIRI, String filename)
+    public static int Write(String HOST, String USERNAME, String PASSWORD, String GRAPHIRI, String filename)
     {
-	VirtGraph set = new VirtGraph(GRAPHIRI, HOST, USERNAME, PASSWORD);
-	Model testModel = ModelFactory.createDefaultModel();
-	testModel.read(filename);
-	System.out.println(filename + " Virtuoso writing START!");
-	StmtIterator iterator = testModel.listStatements();
-        while(iterator.hasNext())
-        {
-            Statement stm = iterator.next();
-            //System.out.println(stm.getSubject() + " " + stm.getPredicate() + " " + stm.getObject());
-	    Node subject = NodeFactory.createURI(stm.getSubject().toString());
-	    Node predicate = NodeFactory.createURI(stm.getPredicate().toString());
-	    Node object = NodeFactory.createURI(stm.getObject().toString());
+		VirtGraph set = new VirtGraph(GRAPHIRI, HOST, USERNAME, PASSWORD);
+		Model testModel = ModelFactory.createDefaultModel();
+		testModel.read(filename);
+		System.out.println(filename + " Virtuoso writing START!");
+		StmtIterator iterator = testModel.listStatements();
+		int size = 0;
+	        while(iterator.hasNext())
+	        {
+	            Statement stm = iterator.next();
+	            //System.out.println(stm.getSubject() + " " + stm.getPredicate() + " " + stm.getObject());
+			    Node subject = NodeFactory.createURI(stm.getSubject().toString());
+			    Node predicate = NodeFactory.createURI(stm.getPredicate().toString());
+			    Node object = NodeFactory.createURI(stm.getObject().toString());
 
-	    set.add(new Triple(subject, predicate, object));
-        }
+			    set.add(new Triple(subject, predicate, object));
+			    size+= 1;
+	        }
 
-	testModel.close();
-	set.close();
-	System.out.println(filename + " Virtuoso writing DONE!");
+		testModel.close();
+		set.close();
+		System.out.println(filename + " Virtuoso writing DONE!");
+		return size;
     }
+    
 } 

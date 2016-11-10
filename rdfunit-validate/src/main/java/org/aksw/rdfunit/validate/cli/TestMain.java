@@ -68,33 +68,46 @@ public class TestMain {
      * @param args an array of {@link java.lang.String} objects.
      * @throws java.lang.Exception if any.
      */
-    public static void main(String[] args) throws Exception {
-	System.out.println("TEST MAIN START!");
+    public static void main(String[] args) throws Exception 
+    {
+		System.out.println("TEST MAIN START!");
 
-	Calendar startTime = Calendar.getInstance();
-	SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
-	String date = dateFormat.format(startTime.getTime());
+		Calendar startTime = Calendar.getInstance();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
+		String date = dateFormat.format(startTime.getTime());
 
-	List<String> address = ReadConfigurationFromINIFile.readConfigurationFromINIFile();
-	System.out.println(address);
-	
-	String runtimeGraph = ReadConfigurationFromINIFile.TEST_OUTPUT_IRI3;
+		List<String> address = ReadConfigurationFromINIFile.readConfigurationFromINIFile();
+		System.out.println(address);
 		
+		String runtimeGraph = ReadConfigurationFromINIFile.TEST_OUTPUT_IRI3;
+			
 
-	String integratedTTL = "kbox_" + date + ".ttl";
-	String filename_parameter = MakeTTL.makeTTLfile(HOST, USERNAME, PASSWORD, address, integratedTTL);
-	
-	//String TestingTTL = "ttl-resource/TestCase4.ttl";
-	//String[] rdfunit_parameter = {"-d", TestingTTL};
-	//ValidateCLI.doMain(rdfunit_parameter, TestingTTL);
-	
-	String[] rdfunit_parameter = {"-d", filename_parameter};
-	ValidateCLI.doMain(rdfunit_parameter, filename_parameter);
+		String integratedTTL = "kbox_" + date + ".ttl";
+		String filename_parameter = MakeTTL.makeTTLfile(HOST, USERNAME, PASSWORD, address, integratedTTL);
+		
+		//String TestingTTL = "ttl-resource/TestCase4.ttl";
+		//String[] rdfunit_parameter = {"-d", TestingTTL};
+		//ValidateCLI.doMain(rdfunit_parameter, TestingTTL);
+		
+		String[] rdfunit_parameter = {"-d", filename_parameter};
+		ValidateCLI.doMain(rdfunit_parameter, filename_parameter);
 
-	String OUTPUT_IRI = "http://kbox_" + date + ".kaist.ac.kr";
-	WriteToVirtuoso.Write(HOST, USERNAME, PASSWORD, OUTPUT_IRI, filename_parameter);
-	WriteDateToVirtuoso.WriteDate(HOST, USERNAME, PASSWORD, runtimeGraph, date);
-    }
+		String OUTPUT_IRI = "http://kbox_" + date + ".kaist.ac.kr";
+		int size = 0;
 
+		try{
+			size = WriteToVirtuoso.Write(HOST, USERNAME, PASSWORD, OUTPUT_IRI, filename_parameter);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+
+		if(size > 0){
+			WriteDateToVirtuoso.WriteDate(HOST, USERNAME, PASSWORD, runtimeGraph, date);
+			System.out.println("Done.");
+	    }else{
+	    	System.out.println("No results: Nothing to write");
+	    }
+
+	}
 }
 
