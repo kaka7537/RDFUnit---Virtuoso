@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 
 public class ReadConfigurationFromINIFile {
-    public static String HOST="jdbc:virtuoso://211.109.9.79:1111/charset=UTF-8/log_enable=2";
+    public static String HOST="jdbc:virtuoso://localhost:1111/charset=UTF-8/log_enable=2";
     public static String TESTHOST="jdbc:virtuoso://dmserver5.kaist.ac.kr:4004/charset=UTF-8/log_enable=2";
     public static String USERNAME="dba";
     public static String PASSWORD="dba";
